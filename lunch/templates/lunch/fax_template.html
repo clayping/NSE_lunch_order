@@ -1,0 +1,38 @@
+<!-- lunch/templates/lunch/fax_template.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: sans-serif; font-size: 12px; }
+    .header { text-align: center; margin-bottom: 1em; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 2em; }
+    th, td { border: 1px solid #000; text-align: center; padding: 4px; }
+    .footer { text-align: right; font-size: 10px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>ベジタブルディッシュ17 御中&nbsp;&nbsp;FAX番号 0191-43-2121</div>
+    <h2>お弁当注文書</h2>
+  </div>
+
+  <table>
+    <tr>
+      <th>注文日</th><th>ライス大</th><th>ライス中</th><th>ライス小</th>
+    </tr>
+    <tr>
+      <td>{{ today|date:"Y年n月j日" }}</td>
+      <td>{{ counts.large }}ヶ</td>
+      <td>{{ counts.medium }}ヶ</td>
+      <td>{{ counts.small }}ヶ</td>
+    </tr>
+  </table>
+
+  <div class="footer">
+    NSエンジニアリング株式会社&nbsp;&nbsp;FAX番号 0191-48-4491<br>
+    ※捺印にて返送お願いいたします
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}NS Lunch Order{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+  <header>
+    <h1><a href="{% url 'today_order' %}">NSエンジニアリング ランチ注文</a></h1>
+    {% if user.is_authenticated %}
+      <p>ようこそ {{ user.get_username }} さん！<a href="{% url 'account_logout' %}">ログアウト</a></p>
+    {% else %}
+      <p><a href="{% url 'account_login' %}">ログイン</a></p>
+    {% endif %}
+    <nav>
+      <a href="{% url 'today_order' %}">当日注文</a> |
+      <a href="{% url 'fax_order_pdf' %}">PDF出力</a>
+    </nav>
+    <hr>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <hr>
+    <p>&copy; 2025 NSエンジニアリング</p>
+  </footer>
+</body>
+</html>

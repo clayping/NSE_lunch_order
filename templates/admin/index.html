@@ -1,0 +1,16 @@
+{# templates/admin/index.html #}
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+
+{% block content %}
+  {{ block.super }}
+
+  <div class="module" style="margin-top: 2em; padding: 1em; border: 1px solid #ccc;">
+    <h2>{% trans "ランチ設定サマリー" %}</h2>
+    <ul>
+      <li>{% trans "今月累計補助額" %}: ¥{{ monthly_subsidy_total }}</li>
+      <li>{% trans "上限超過ユーザー数" %}: {{ users_over_limit_count }}</li>
+    </ul>
+  </div>
+{% endblock %}

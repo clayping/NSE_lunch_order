@@ -1,0 +1,29 @@
+/* site.css */
+#order-calendar {
+  border-collapse: collapse;
+}
+#order-calendar td,
+#order-calendar th {
+  border: 1px solid #999;
+  padding: 4px;
+  text-align: center;
+}
+#order-calendar .off-month {
+  background: #f5f5f5;
+}
+#order-calendar .ordered {
+  background: #cfc !important;
+}
+#order-calendar .status-text {
+  display: block;
+  margin-top: 0.5em;
+  font-size: 0.8em;
+}
+
+#order-calendar .day-cell.disabled {
+  background: #f5f5f5;
+  color: #999;
+  pointer-events: none; /* クリック無効 */
+}
+
+#order-calendar .day-cell.locked { opacity: 0.5; pointer-events: none; }

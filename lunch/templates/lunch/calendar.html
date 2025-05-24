@@ -1,0 +1,82 @@
+{# lunch/templates/lunch/calendar.html #}
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ year }}年{{ month }}月の注文カレンダー{% endblock %}
+
+{% block content %}
+<h2>{{ year }}年{{ month }}月</h2>
+<table id="order-calendar" border="1" cellspacing="0" cellpadding="4">
+  <tr>
+    <th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th><th>日</th>
+  </tr>
+  {% for week in calendar_data %}
+  <tr>
+    {% for dayinfo in week %}
+      {% if not dayinfo.is_current_month %}
+        <td class="off-month"></td>
+      {% else %}
+        <td
+          class="day-cell {% if dayinfo.ordered %}ordered{% endif %}
+                {% if not dayinfo.allowed %} disabled{% endif %}"
+          data-date="{{ dayinfo.day|date:'Y-m-d' }}"
+          style="vertical-align:top; width:14%; height:80px;"
+        >
+          <!-- ← ここで日付番号を表示 -->
+          <div class="date-number">{{ dayinfo.day.day }}</div>
+          <small class="status-text">
+            {% if dayinfo.ordered %}注文済{% endif %}
+          </small>
+        </td>
+      {% endif %}
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+
+<nav style="margin-top:1em;">
+  <a href="{% url 'monthly_calendar' year=year month=month|add:-1 %}">{% trans "前月" %}</a> |
+  <a href="{% url 'monthly_calendar' year=year month=month %}">{% trans "今月" %}</a> |
+  <a href="{% url 'monthly_calendar' year=year month=month|add:1 %}">{% trans "次月" %}</a>
+</nav>
+
+<script>
+  // CSRF トークン取得 （Django 標準の方法）
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      document.cookie.split(';').forEach(c => {
+        const [k, v] = c.trim().split('=');
+        if (k === name) cookieValue = decodeURIComponent(v);
+      });
+    }
+    return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  document.querySelectorAll('#order-calendar .day-cell').forEach(td => {
+    td.style.cursor = 'pointer';
+    td.addEventListener('click', () => {
+      const date = td.dataset.date;
+      fetch("{% url 'toggle_order' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({ date: date }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'ordered') {
+          td.classList.add('ordered');
+          td.querySelector('.status-text').textContent = '注文済';
+        } else {
+          td.classList.remove('ordered');
+          td.querySelector('.status-text').textContent = '';
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}
