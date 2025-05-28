@@ -1,10 +1,10 @@
 import calendar
-from datetime import date
+from datetime import date, datetime
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from lunch.models import Order, LunchConfig
 from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment, PatternFill
+from openpyxl.styles import Font, Alignment, PatternFill, numbers
 
 class Command(BaseCommand):
     help = "月末ランチ注文レポートを Excel で出力します"
@@ -34,11 +34,28 @@ class Command(BaseCommand):
         ws  = wb.active
         ws.title = f"{year}年{month}月ランチ注文"
 
-        # 列ヘッダー
+         # ヘッダー行（コード, 氏名, 1日～N日, 集計列）
         header = ['コード','氏名'] \
                + [f"{d}日" for d in range(1, days+1)] \
                + ['注文数','合計金額','補助額','上限','会社負担','超過','実費']
         ws.append(header)
+
+        # ── 曜日行を追加 ──
+        # headerの日付部分に対応する曜日（日本語：月〜日）を生成
+        weekday_map = ['月','火','水','木','金','土','日']
+        weekday_row = ['', '']  # 「コード」「氏名」列は空白
+        for d in range(1, days+1):
+            wd = date(year, month, d).weekday()  # 0=月 … 6=日
+            weekday_row.append(weekday_map[wd])
+        # 集計列の曜日は空白にしておく
+        weekday_row += [''] * 7
+        ws.append(weekday_row)
+
+        # 曜日行の書式（中央寄せ＆イタリックなど）
+        for col in range(1, len(header)+1):
+            cell = ws.cell(row=2, column=col)
+            cell.alignment = Alignment(horizontal='center')
+            cell.font = Font(italic=True)
 
         # ヘッダー書式
         for col in range(1, len(header)+1):
@@ -46,6 +63,13 @@ class Command(BaseCommand):
             cell.font = Font(bold=True)
             cell.fill = PatternFill("solid", fgColor="DDDDDD")
             cell.alignment = Alignment(horizontal='center')
+        # ── 週末列を灰色にするための列インデックスリスト作成 ──
+        weekend_cols = []
+        for d in range(1, days+1):
+            wd = datetime(year, month, d).weekday()  # 5=土,6=日
+            if wd in (5, 6):
+                # 「コード」「氏名」を飛ばして、日付列は3列目から始まる
+                weekend_cols.append(2 + d)
 
         # 各ユーザー行
         for row_idx, user in enumerate(users, start=2):
@@ -82,6 +106,11 @@ class Command(BaseCommand):
             ]
             ws.append(row)
 
+            # ── データ行の週末セルを灰色に ──
+            for col in weekend_cols:
+                cell = ws.cell(row=row_idx, column=col)
+                cell.fill = PatternFill("solid", fgColor="EEEEEE")
+
         # 日別合計行
         total_row = ['', '合計']
         # 日別合計
@@ -109,6 +138,12 @@ class Command(BaseCommand):
             user_pay,
         ]
         ws.append(total_row)
+
+        # ── 合計行の週末セルも灰色に ──
+        total_row_idx = ws.max_row
+        for col in weekend_cols:
+            cell = ws.cell(row=total_row_idx, column=col)
+            cell.fill = PatternFill("solid", fgColor="EEEEEE")
 
         # 合計行書式
         last_row = ws.max_row
