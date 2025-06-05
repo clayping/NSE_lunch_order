@@ -101,21 +101,31 @@ def today_order(request):
     user = request.user
     today = date.today()
 
-    # キャンセルされていない当日の注文レコードを取得
-    order = Order.objects.filter(user=user, order_date=today, canceled=False).first()
-
+    # まず、当日の注文レコードをキャンセルフラグに関係なく取得
+    order = Order.objects.filter(user=user, order_date=today).first()
+    
     if request.method == 'POST':
         action = request.POST.get('action')
-        if action == 'order' and not order:
-            Order.objects.create(user=user, order_date=today)
+        if action == 'order':
+            if not order:
+                # レコード自体がなければ新規作成
+                Order.objects.create(user=user, order_date=today, vendor='veg17', rice_size='中')
+            else:
+                # 既存レコードがあるならキャンセルフラグをオフに
+                order.canceled = False
+                order.canceled_at = None
+                order.save()
         elif action == 'cancel' and order:
+            # キャンセルするときはフラグをオンにして日時を埋める
             order.canceled = True
             order.canceled_at = timezone.now()
             order.save()
         return redirect('today_order')
 
+    # ★キャンセル済みの場合はテンプレート上では「注文なし扱い」にする
+    order_for_template = order if order and not order.canceled else None
     return render(request, 'lunch/today_order.html', {
-        'order': order,
+        'order': order_for_template,
         'today': today,
     })
 @login_required
@@ -138,7 +148,7 @@ def toggle_order(request):
     if day not in allowed:
         return JsonResponse({'error': '変更可能期間外です'}, status=403)
 
-    if now.time() >= time(9, 0) and day == date.today():
+    if now.time() >= time(8, 10) and day == date.today():
         return JsonResponse({'error': '受付は午前9時までです'}, status=403)
     # get_or_create ならレコードがなければ作ってくれる
     order, created = Order.objects.get_or_create(

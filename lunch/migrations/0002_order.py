@@ -50,8 +50,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("quantity", models.PositiveIntegerField(default=1)),
-                ("price", models.IntegerField(default=650)),
-                ("subsidy", models.IntegerField(default=230)),
+                ("price", models.IntegerField(default=430)),
+                ("subsidy", models.IntegerField(default=200)),
                 ("canceled", models.BooleanField(default=False)),
                 ("canceled_at", models.DateTimeField(blank=True, null=True)),
                 (

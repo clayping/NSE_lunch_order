@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # ── LunchConfig の取得 or 作成 ──
         cfg, created = LunchConfig.objects.get_or_create(
-            defaults={'price': 650, 'subsidy': 230, 'monthly_limit': 3780}
+            defaults={'price': 430, 'subsidy': 200, 'monthly_limit': 3780}
         )
         if created:
             self.stdout.write(self.style.WARNING(
@@ -34,10 +34,10 @@ class Command(BaseCommand):
         ws  = wb.active
         ws.title = f"{year}年{month}月ランチ注文"
 
-         # ヘッダー行（コード, 氏名, 1日～N日, 集計列）
+        # ヘッダー行（コード, 氏名, 1日～N日, 集計列）
         header = ['コード','氏名'] \
                + [f"{d}日" for d in range(1, days+1)] \
-               + ['注文数','合計金額','補助額','上限','会社負担','超過','実費']
+               + ['注文数計','合計金額','補助額','上限','会社負担','超過','実費']
         ws.append(header)
 
         # ── 曜日行を追加 ──
@@ -106,6 +106,19 @@ class Command(BaseCommand):
             ]
             ws.append(row)
 
+            # 通貨列にカンマ区切り書式を設定
+            # 「注文数」が列 index = 2 + days
+            base_col = 2 + days
+            for offset, fmt_col in enumerate(
+                ['合計金額','補助額','上限','会社負担','超過','実費'], start=1
+            ):
+                cell = ws.cell(
+                    row=row_idx,
+                    column=base_col + offset
+                )
+                # ¥付きカンマ区切り
+                cell.number_format = '"¥"#,##0'
+
             # ── データ行の週末セルを灰色に ──
             for col in weekend_cols:
                 cell = ws.cell(row=row_idx, column=col)
@@ -138,6 +151,14 @@ class Command(BaseCommand):
             user_pay,
         ]
         ws.append(total_row)
+
+        last = ws.max_row
+        for offset in range(1, 7):  # 集計列は 7 列分
+            cell = ws.cell(
+                row=last,
+                column=base_col + offset
+            )
+            cell.number_format = '"¥"#,##0'
 
         # ── 合計行の週末セルも灰色に ──
         total_row_idx = ws.max_row

@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         cfg, created = LunchConfig.objects.get_or_create(
-            defaults={'price': 650, 'subsidy': 230, 'monthly_limit': 3780}
+            defaults={'price': 430, 'subsidy': 200, 'monthly_limit': 3780}
         )
         if created:
             self.stdout.write(self.style.WARNING(

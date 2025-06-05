@@ -22,8 +22,8 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("price", models.IntegerField(default=650, help_text="お弁当価格")),
-                ("subsidy", models.IntegerField(default=230, help_text="会社補助額")),
+                ("price", models.IntegerField(default=430, help_text="お弁当価格")),
+                ("subsidy", models.IntegerField(default=200, help_text="会社補助額")),
                 (
                     "monthly_limit",
                     models.IntegerField(default=3780, help_text="会社負担上限額"),

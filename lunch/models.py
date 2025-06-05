@@ -4,8 +4,8 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 class LunchConfig(models.Model):
-    price         = models.IntegerField(default=650, help_text="お弁当価格")
-    subsidy       = models.IntegerField(default=230, help_text="会社補助額")
+    price         = models.IntegerField(default=430, help_text="お弁当価格")
+    subsidy       = models.IntegerField(default=200, help_text="会社補助額")
     monthly_limit = models.IntegerField(default=3780, help_text="会社負担上限額")
 
     class Meta:
@@ -32,8 +32,8 @@ class Order(models.Model):
     vendor      = models.CharField(max_length=20, choices=VENDORS)
     rice_size   = models.CharField(max_length=2, choices=RICE_SIZES, default='中')
     quantity    = models.PositiveIntegerField(default=1)
-    price       = models.IntegerField(default=650)
-    subsidy     = models.IntegerField(default=230)
+    price       = models.IntegerField(default=430)
+    subsidy     = models.IntegerField(default=200)
     status      = models.CharField(
         max_length=20,
         choices=[
