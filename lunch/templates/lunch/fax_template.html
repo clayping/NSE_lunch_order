@@ -4,6 +4,65 @@
 <head>
   <meta charset="utf-8">
   <style>
+    body { font-family: sans-serif; }
+    .center { text-align: center; }
+    .small { font-size: 0.8em; }
+    .box { border: 1px solid #000; border-collapse: collapse; }
+    .box th,
+    .box td { border: 1px solid #000; padding: 4px; }
+    .no-border { border: none; }
+    .right { text-align: right; }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <p class="center">
+    ベジタブルディッシュ１７　御中<br>
+    FAX番号　0191‐43‐2121
+  </p>
+  <h2 class="center">お弁当注文書</h2>
+
+  <!-- 注文集計テーブル -->
+  <table class="box" style="width:70%; margin:0 auto;">
+    <tr>
+      <th class="center">注文日</th>
+      <th class="center">ライス大</th>
+      <th class="center">ライス中</th>
+      <th class="center">ライス小</th>
+    </tr>
+    <tr>
+      <td class="center small">
+        {{ today.year }}年{{ today.month }}月{{ today.day }}日
+      </td>
+      <td class="center small">{{ counts.large }}ヶ</td>
+      <td class="center small">{{ counts.medium }}ヶ</td>
+      <td class="center small">{{ counts.small }}ヶ</td>
+    </tr>
+  </table>
+
+  <!-- 確認欄 -->
+  <table class="box" style="width:70%; margin:1em auto 0; table-layout: fixed;">
+    <tr>
+      <td class="center" style="width:20%;">確認印</td>
+      <td class="no-border"></td>
+    </tr>
+  </table>
+
+  <!-- 会社情報 -->
+  <p class="right small" style="margin-top:2em;">
+    NSエンジニアリング株式会社<br>
+    FAX番号 0191‐48‐4491<br>
+    ※捺印にて返送お願いいたします
+  </p>
+
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <style>
     body { font-family: sans-serif; font-size: 12px; }
     .header { text-align: center; margin-bottom: 1em; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 2em; }
@@ -35,4 +94,4 @@
   </div>
 </body>
 </html>
-
+ -->

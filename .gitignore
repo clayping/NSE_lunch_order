@@ -16,3 +16,5 @@ staticfiles/
 # VSCode / IDE
 .vscode/
 .idea/
+
+lunch_report_*.xlsx

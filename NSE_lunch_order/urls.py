@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.views.generic import RedirectView
 from django.urls import path, include
-from lunch.views import fax_order_pdf, today_order, monthly_calendar, toggle_order
+from lunch.views import fax_order_pdf, today_order, monthly_calendar, toggle_order, fax_order_excel
 
 urlpatterns = [
     path('', RedirectView.as_view(url='accounts/login/')),
@@ -33,4 +33,6 @@ urlpatterns = [
     path('calendar/<int:year>/<int:month>/', monthly_calendar, name='monthly_calendar'),
 
     path('api/toggle-order/', toggle_order, name='toggle_order'),
+
+    path('excel-order/', fax_order_excel, name='fax_order_excel')
 ]
